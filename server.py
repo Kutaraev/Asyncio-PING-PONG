@@ -131,7 +131,7 @@ async def ansver_to_client(websocket, path):
                         await user.send(error_message)
 
     except websockets.exceptions.ConnectionClosedError:
-        print("Conection with client lost")
+         mylogs.info("Conection with client lost")
 
     finally:
         USERS.remove(websocket)
