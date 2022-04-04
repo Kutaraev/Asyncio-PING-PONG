@@ -84,7 +84,7 @@ async def broadcast():
     while True:
         for user in USERS:
             server_status_message = encode(
-                f"STATUS UPTIME: {round(time.time() - TIME)} seconds."
+                f"STATUS UPTIME {round(time.time() - TIME)}"
                 )
             await user.send(server_status_message)
         await asyncio.sleep(UPTIME_FREQUENCY)
@@ -97,7 +97,7 @@ async def increment():
     """
 
     while True:
-        INCREMENT.append(str(len(INCREMENT) + 1))
+        INCREMENT.append(1)
         await asyncio.sleep(5)
 
 
@@ -113,14 +113,12 @@ async def ansver_to_client(websocket, path):
     try:
         async for msg in websocket:
             if decode(msg) in RESPONCES.keys():
-                mylogs.info(f"Client send: {decode(msg)}")
+                mylogs.info(f"Client send to server: {decode(msg)}")
                 for user in USERS:
                     if user == websocket:
-                        N_val = '[' + ' '.join(INCREMENT) + ']'
-                        send_message = encode(
-                            f"Server send: {RESPONCES[decode(msg)]} {N_val}"
-                            )
-                        await user.send(send_message)
+                        send_message = f"{RESPONCES[decode(msg)]} {len(INCREMENT)}"
+                        await user.send(encode(send_message))
+                        mylogs.info(f"Server send to client: {send_message}")
             else:
                 mylogs.error(f"Client send unknown command {decode(msg)}")
                 for user in USERS:
