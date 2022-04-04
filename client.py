@@ -70,6 +70,12 @@ def decode(message):
     return message.decode('utf-8')
 
 
+async def send_message():
+    message = REQUESTS['PING']
+    await asyncio.sleep(FREQUENCY)
+    return message
+
+
 async def listen_server():
     """Function connects to server, sends and recieves messages.
     Requests takes from "REQUESTS" dictionary and sends with frequency in
@@ -80,11 +86,14 @@ async def listen_server():
 
     async with websockets.connect(server_url) as websocket:
         while True:
-            push_message = REQUESTS['PING']
+            # Sending messages
+            push_message = await send_message()
             await websocket.send(encode(push_message))
+            mylogs.info(f"Client send to server: {push_message}")
+            # Recieving messages
             message_from_server = await websocket.recv()
-            mylogs.info(decode(message_from_server))
-            await asyncio.sleep(FREQUENCY)
+            mylogs.info(f" Server send to client: {decode(message_from_server)}")
+
 
 if __name__ == "__main__":
     try:
